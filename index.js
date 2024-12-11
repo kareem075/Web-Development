@@ -23,17 +23,14 @@ app.use(express.json())
     });
     
   
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
-
-app.post('/users', (req, res) => {
-    const newItem = {
-        id: users.length + 1,
-        name: req.body.name 
-    };
-    users.push(newItem);
-    res.status(201).json(newItem);
-});
+// app.post('/users', (req, res) => {
+//     const newItem = {
+//         id: users.length + 1,
+//         name: req.body.name 
+//     };
+//     users.push(newItem);
+//     res.status(201).json(newItem);
+// });
 
 
 
@@ -52,7 +49,7 @@ app.delete('/users/:id', (req, res) => {
 });
 
 
-app.get('/users/login', (req, res) => {
+app.post('/users/login', (req, res) => {
   const email = req.body.email
   const password = req.body.password
   db.get(`SELECT * FROM USER (email, password) VALUES ('${email}','${password}',0)`,(err)=>{
@@ -141,11 +138,11 @@ app.get('/orders', (req, res) => {
 });
 
 
-app.post('/orders', (req, res) => {
+app.post('/orders/neworder', (req, res) => {
   const user_id = req.body.user_id
   const orders = req.body.orders
   const total = req.body.total
-  db.get(`INSERT INTO ORDERS (user_id, orders, total) VALUES ('${user_id}','${orders}','${total}')`,(err)=>{
+  db.run(`INSERT INTO ORDERS (user_id, orders, total) VALUES ('${user_id}','${orders}','${total}')`,(err)=>{
       if(err)
       {
         console.log(err.message)
