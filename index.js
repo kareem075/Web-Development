@@ -8,7 +8,9 @@ const db_access = require('./db.js')
 const db = db_access.db
 app.use(express.json())
 
-  app.get('/users', (req, res) => {
+  
+
+app.get('/users', (req, res) => {
     res.json(users);
   });
   
