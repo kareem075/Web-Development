@@ -12,6 +12,24 @@ app.use(cors({
     credentials: true
 }));
 
+
+const adminMiddleware = (req, res, next) => {
+    const userId = req.body.user_id;
+    const sql = 'SELECT * FROM users WHERE ID = ?';
+    db.get(sql, [userId], (err, user) => {
+        if (err) {
+            console.error(err.message);
+            return res.status(500).send('Database error');
+        }
+        if (!user || user.ISADMIN !== 1) {
+            return res.status(403).send('Admin privileges required');
+        }
+        next();
+    });
+};
+
+
+
 app.use(express.json());
 
 app.get('/user', (req, res) => {
@@ -51,7 +69,7 @@ app.get('/user/:id', (req, res) => {
 });
 
 
-app.delete('/user/:id', (req, res) => {
+app.delete('/user/:id', adminMiddleware, (req, res) => {
     const id = req.params.id;
     const deleteUserQuery = `DELETE FROM User WHERE id = ?`;
 
@@ -63,6 +81,7 @@ app.delete('/user/:id', (req, res) => {
         res.status(200).send('User deleted successfully');
     });
 });
+
 
 
 
@@ -113,7 +132,7 @@ app.post('/user/register', (req, res) => {
 });
 
 
-app.post('/clothings', (req, res) => {
+app.post('/clothings', adminMiddleware, (req, res) => {
     const name = req.body.name;
     const category = req.body.category;
     const price = req.body.price;
@@ -127,6 +146,7 @@ app.post('/clothings', (req, res) => {
         }
     });
 });
+
 
 
 
@@ -197,6 +217,21 @@ app.delete('/orders', (req, res) => {
         }
     });
 });
+
+
+app.delete('/orders', adminMiddleware, (req, res) => {
+    const user_id = req.body.user_id;
+
+    db.get(`DELETE FROM ORDERS WHERE user_id = '${user_id}'`, (err) => {
+        if (err) {
+            console.log(err.message);
+            return res.status(500).json({ error: 'Failed to delete order' });
+        } else {
+            return res.status(200).send('Order deleted Successfully');
+        }
+    });
+});
+
 
 
 
