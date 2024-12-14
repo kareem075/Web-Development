@@ -84,6 +84,27 @@ app.delete('/user/:id', adminMiddleware, (req, res) => {
 
 
 
+app.put('/user/update/:id', (req, res) => {
+    const id = req.params.id;
+    const newEmail = req.body.email;
+    const newPassword = bcrypt.hashSync(req.body.password, 10);
+
+    const sql = `UPDATE users SET EMAIL = ?, PASSWORD = ? WHERE ID = ?`;
+    db.run(sql, [newEmail, newPassword, id], function (err) {
+        if (err) {
+            console.error(err.message);
+            return res.status(500).send('Database error');
+        }
+        if (this.changes === 0) {
+            return res.status(404).send('User not found');
+        }
+        return res.status(200).json({
+            message: 'User updated successfully'
+        });
+    });
+});
+
+
 
 app.post('/user/login', (req, res) => {
     const email = req.body.email;
@@ -104,6 +125,8 @@ app.post('/user/login', (req, res) => {
         });
     });
 });
+
+
 
 
 
@@ -185,6 +208,26 @@ app.get('/clothings/:id', (req, res) => {
     });
 });
 
+
+app.put('/clothings/update/:id', adminMiddleware, (req, res) => {
+    const id = req.params.id;
+    const name = req.body.name;
+    const category = req.body.category;
+    const price = req.body.price;
+    const stock = req.body.stock;
+
+    const sql = `UPDATE CLOTHINGS SET name = ?, category = ?, price = ?, stock = ? WHERE ID = ?`;
+    db.run(sql, [name, category, price, stock, id], function (err) {
+        if (err) {
+            console.error(err.message);
+            return res.status(500).send('Database error');
+        }
+        if (this.changes === 0) {
+            return res.status(404).send('Clothing item not found');
+        }
+        return res.status(200).send('Clothing updated successfully');
+    });
+});
 
 
 
