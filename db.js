@@ -2,7 +2,7 @@ const sqlite = require('sqlite3');
 const db = new sqlite.Database('database.db');
 
 
-const createusersTable = `CREATE TABLE IF NOT EXISTS users (
+const createuserTable = `CREATE TABLE IF NOT EXISTS users (
 ID INTEGER PRIMARY KEY AUTOINCREMENT,
 EMAIL TEXT UNIQUE NOT NULL,
 NAME TEXT NOT NULL,
@@ -37,9 +37,25 @@ ORDERS TEXT,
 TOTAL REAL NOT NULL)`;
 
 
+const createreviewtable = `CREATE TABLE IF NOT EXISTS review (
+ID INTEGER PRIMARY KEY AUTOINCREMENT,
+USER_ID TEXT NOT NULL,
+NAME TEXT,
+REVIEW TEXT NOT NULL)`;
+
+
+const createCartTable = `CREATE TABLE IF NOT EXISTS cart ( 
+ID INTEGER PRIMARY KEY AUTOINCREMENT, 
+USER_ID INTEGER NOT NULL, 
+PRODUCT_ID INTEGER NOT NULL, 
+QUANTITY INTEGER NOT NULL, 
+FOREIGN KEY(USER_ID) REFERENCES users(ID), 
+FOREIGN KEY(PRODUCT_ID) REFERENCES products(ID) )`;
+
+    
 
 db.serialize(() => {
-    db.run(createusersTable, (err) => {
+    db.run(createuserTable, (err) => {
         if (err) {
             return console.error("Error creating Users table:", err.message);
         }
@@ -53,12 +69,6 @@ db.serialize(() => {
         console.log("Clothings table created successfully.");
     });
 
-    db.run(createProductstable, (err) => {
-        if (err) {
-            return console.error("Error creating Products table:", err.message);
-        }
-        console.log("Products table created successfully.");
-    });
 
     db.run(createorderstable, (err) => {
         if (err) {
@@ -66,6 +76,21 @@ db.serialize(() => {
         }
         console.log("Orders table created successfully.");
     });
+
+    db.run(createreviewtable, (err) => {
+        if (err) {
+            return console.error("Error creating review table:", err.message);
+        }
+        console.log("review table created successfully.");
+    });
+
+
+    db.run(createCartTable, (err) => {
+        if (err) {
+            return console.error("Error creating Clothings table:", err.message);
+        }
+        console.log("Clothings table created successfully.");
+    });
 });
 
-module.exports={db,createusersTable, createProductstable, createorderstable, createclothingstable}
+module.exports={db,createuserTable, createorderstable, createclothingstable,createreviewtable,createCartTable}
