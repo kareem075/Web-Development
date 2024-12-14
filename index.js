@@ -14,7 +14,6 @@ app.use(cors({
 
 app.use(express.json());
 
-
 app.get('/user', (req, res) => {
     const sql = 'SELECT * FROM user';
     db.all(sql, [], (err, rows) => {
@@ -259,5 +258,5 @@ app.post('/cart/addtocart', (req, res) => {
 
 
 app.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+    console.log(`Server port running at http://${hostname}:${port}/`);
 });
